@@ -10,6 +10,9 @@ public class Epic extends Task {
         this.subtask = subtask;
     }
 
+    public Epic(String name, String description) {
+        super(name, description);
+    }
 
     public List<Integer> getSubtask() {
         return subtask;
