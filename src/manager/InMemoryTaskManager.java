@@ -158,29 +158,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        Task task = tasks.get(id);
-        Task taskForHistory = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus());
-        historyManager.addToHistory(taskForHistory);
+        Task task = new Task(id,tasks.get(id).getName(),tasks.get(id).getDescription(), tasks.get(id).getStatus());
+        historyManager.addToHistory(task);
 
         return tasks.get(id);
     }
 
     @Override
     public Epic getEpicById(int id) {
-        Epic epic = epics.get(id);
-        Epic taskForHistory = new Epic(epic.getId(), epic.getName(), epic.getDescription(), epic.getStatus(),
-                epic.getSubtask());
-        historyManager.addToHistory(taskForHistory);
+        Epic epic = new Epic(id,epics.get(id).getName(),epics.get(id).getDescription(), epics.get(id).getStatus(),
+                epics.get(id).getSubtask());
+        historyManager.addToHistory(epic);
 
         return epics.get(id);
     }
 
     @Override
     public Subtask getSubtaskById(int id) {
-        Subtask subtask = subtasks.get(id);
-        Subtask taskForHistory = new Subtask(subtask.getId(), subtask.getName(), subtask.getDescription(),
-                subtask.getStatus(), subtask.getEpicId());
-        historyManager.addToHistory(taskForHistory);
+        Subtask subtask = new Subtask(id,subtasks.get(id).getName(),subtasks.get(id).getDescription(),
+                subtasks.get(id).getStatus(), subtasks.get(id).getEpicId());
+        historyManager.addToHistory(subtask);
 
         return subtasks.get(id);
     }
