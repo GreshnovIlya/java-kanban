@@ -158,6 +158,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
+        // Я создаю новый task, потому что история просмотра должна хранить версию task, которая была при просмотре
+        // А если я передам task полученную через tasks.get(id), то в истории он будет меняться при обновлении данных task
         Task task = new Task(id,tasks.get(id).getName(),tasks.get(id).getDescription(), tasks.get(id).getStatus());
         historyManager.addToHistory(task);
 
@@ -166,6 +168,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
+        // Я создаю новый epic, потому что история просмотра должна хранить версию epic, которая была при просмотре
+        // А если я передам epic полученную через epics.get(id), то в истории он будет меняться при обновлении данных epic
         Epic epic = new Epic(id,epics.get(id).getName(),epics.get(id).getDescription(), epics.get(id).getStatus(),
                 epics.get(id).getSubtask());
         historyManager.addToHistory(epic);
@@ -175,6 +179,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
+        // Я создаю новый subtask, потому что история просмотра должна хранить версию subtask, которая была при просмотре
+        // А если я передам subtask полученную через subtasks.get(id), то в истории он будет меняться при обновлении данных subtask
         Subtask subtask = new Subtask(id,subtasks.get(id).getName(),subtasks.get(id).getDescription(),
                 subtasks.get(id).getStatus(), subtasks.get(id).getEpicId());
         historyManager.addToHistory(subtask);
