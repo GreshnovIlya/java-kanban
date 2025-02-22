@@ -175,11 +175,15 @@ class InMemoryTaskManagerTest {
         taskManager.deleteEpicById(epic.getId());
 
         Assertions.assertEquals(taskManager.getAllEpic(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllSubtask(), new HashMap<>());
     }
 
     @Test
     void deleteSubtaskById() {
         Map<Integer, Subtask> checkSubtask = new HashMap<>();
+        List checkSub = new ArrayList<>();
+        checkSub.add(1);
+        checkSub.add(3);
 
         Epic epic = new Epic(name, description);
         taskManager.createEpic(epic);
@@ -189,11 +193,15 @@ class InMemoryTaskManagerTest {
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic.getId());
         taskManager.createSubtask(subtask2);
         checkSubtask.put(subtask2.getId(),subtask2);
+        Subtask subtask3 = new Subtask(nameSubtask3, descriptionSubtask3, epic.getId());
+        taskManager.createSubtask(subtask3);
+        checkSubtask.put(subtask3.getId(),subtask3);
 
-        taskManager.deleteSubtaskById(subtask1.getId());
-        checkSubtask.remove(subtask1.getId());
+        taskManager.deleteSubtaskById(subtask2.getId());
+        checkSubtask.remove(subtask2.getId());
 
         Assertions.assertEquals(taskManager.getAllSubtask(), checkSubtask);
+        Assertions.assertEquals(taskManager.getEpicById(0).getSubtask(), checkSub);
     }
 
     @Test
@@ -361,7 +369,7 @@ class InMemoryTaskManagerTest {
     @Test
     void taskInHistoryListShouldNotUpdateAfterTaskUpdate() {
         Task task = new Task(name,description);
-        taskManager.createTask(task);
+        task = taskManager.createTask(task);
         taskManager.getTaskById(task.getId());
         List<Task> history = taskManager.getHistory();
         Task taskInHistory = history.getFirst();
@@ -374,13 +382,16 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void taskInHistoryShouldNotMore10() {
-        int historyValue = 10;
+    void taskInHistoryShouldBe2() {
+        int historyValue = 2;
 
-        Task task = new Task(name,description);
-        taskManager.createTask(task);
-        for (int i = 0; i < 13; i++) {
-            taskManager.getTaskById(task.getId());
+        Task task1 = new Task(name,description);
+        task1 = taskManager.createTask(task1);
+        Task task2 = new Task(nameSubtask1,descriptionSubtask1);
+        task2 = taskManager.createTask(task2);
+        for (int i = 0; i < 4; i++) {
+            taskManager.getTaskById(task1.getId());
+            taskManager.getTaskById(task2.getId());
         }
         List<Task> history = taskManager.getHistory();
 
@@ -388,14 +399,78 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void taskInHistoryShouldBe5() {
-        int historyValue = 5;
+    void taskInHistoryShouldBe0() {
+        int historyValue = 0;
 
-        Task task = new Task(name,description);
-        taskManager.createTask(task);
-        for (int i = 0; i < 5; i++) {
-            taskManager.getTaskById(task.getId());
-        }
+        Task task1 = new Task(name,description);
+        task1 = taskManager.createTask(task1);
+
+        List<Task> history = taskManager.getHistory();
+
+        Assertions.assertEquals(history.size(), historyValue);
+    }
+
+    @Test
+    void taskInHistoryShouldBe2AfterDeletedFirst() {
+        int historyValue = 2;
+
+        Task task1 = new Task(name,description);
+        task1 = taskManager.createTask(task1);
+        Task task2 = new Task(nameSubtask1,descriptionSubtask1);
+        task2 = taskManager.createTask(task2);
+        Task task3 = new Task(nameSubtask1,descriptionSubtask1);
+        task3 = taskManager.createTask(task3);
+
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.deleteTaskById(task1.getId());
+
+        List<Task> history = taskManager.getHistory();
+
+        Assertions.assertEquals(history.size(), historyValue);
+    }
+
+    @Test
+    void taskInHistoryShouldBe2AfterDeletedLast() {
+        int historyValue = 2;
+
+        Task task1 = new Task(name,description);
+        task1 = taskManager.createTask(task1);
+        Task task2 = new Task(nameSubtask1,descriptionSubtask1);
+        task2 = taskManager.createTask(task2);
+        Task task3 = new Task(nameSubtask2,descriptionSubtask2);
+        task3 = taskManager.createTask(task3);
+
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.deleteTaskById(task3.getId());
+
+        List<Task> history = taskManager.getHistory();
+
+        Assertions.assertEquals(history.size(), historyValue);
+    }
+
+    @Test
+    void taskInHistoryShouldBe3AfterDeleted3() {
+        int historyValue = 3;
+
+        Task task1 = new Task(name,description);
+        task1 = taskManager.createTask(task1);
+        Task task2 = new Task(nameSubtask1,descriptionSubtask1);
+        task2 = taskManager.createTask(task2);
+        Task task3 = new Task(nameSubtask2,descriptionSubtask2);
+        task3 = taskManager.createTask(task3);
+        Task task4 = new Task(nameSubtask3,descriptionSubtask3);
+        task4 = taskManager.createTask(task4);
+
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.getTaskById(task4.getId());
+        taskManager.deleteTaskById(task3.getId());
+
         List<Task> history = taskManager.getHistory();
 
         Assertions.assertEquals(history.size(), historyValue);

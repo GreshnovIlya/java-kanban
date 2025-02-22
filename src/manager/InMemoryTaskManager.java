@@ -117,24 +117,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task deleteTaskById(Integer id) {
+        historyManager.remove(id);
         return tasks.remove(id);
     }
 
     @Override
     public Epic deleteEpicById(Integer id) {
+        historyManager.remove(id);
         Epic epic = epics.get(id);
-        List<Integer> epicSubtask = new ArrayList<>();
-        epic.setSubtask(epicSubtask);
+        List<Integer> subtasksInEpic = new ArrayList<>(epic.getSubtask());
+        for (Integer idSubtask : subtasksInEpic) {
+            deleteSubtaskById(idSubtask);
+        }
         return epics.remove(id);
     }
 
     @Override
     public Subtask deleteSubtaskById(Integer id) {
+        historyManager.remove(id);
         Epic epic = epics.get(subtasks.get(id).getEpicId());
         List<Integer> epicSubtask = epic.getSubtask();
         epicSubtask.remove(id);
         epic.setSubtask(epicSubtask);
-        for (Integer integer : epicSubtask) {
+        for (Integer integer : epic.getSubtask()) {
             updateSubtask(subtasks.get(integer));
         }
         return subtasks.remove(id);
@@ -142,17 +147,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask() {
+        for (Task task : tasks.values()) {
+            historyManager.remove(task.getId());
+        }
         tasks = new HashMap<>();
     }
 
     @Override
     public void deleteEpic() {
+        for (Epic epic : epics.values()) {
+            historyManager.remove(epic.getId());
+        }
         subtasks = new HashMap<>();
         epics = new HashMap<>();
     }
 
     @Override
     public void deleteSubtask() {
+        for (Subtask subtask : subtasks.values()) {
+            historyManager.remove(subtask.getId());
+        }
         subtasks = new HashMap<>();
     }
 

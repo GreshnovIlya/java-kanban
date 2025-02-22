@@ -25,72 +25,31 @@ public class Main {
         Subtask subtask1 = new Subtask("Купить ингридиенты для плова",
                 "Заказать ингридиенты к плову", 2);
         subtask1 = taskManager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Приготовить плов",
-                "Приготовить плов на ужин", 2);
+        Subtask subtask2 = new Subtask("Помыть посуду",
+                "Помыть сковородку, тарелки и вилки", 2);
         subtask2 = taskManager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Приготовить плов",
+                "Приготовить плов на ужин", 2);
+        subtask3 = taskManager.createSubtask(subtask3);
 
         Epic epic2 = new Epic("Приготовить обед", "Приготовить обед к 13 часам");
         epic2 = taskManager.createEpic(epic2);
-        Subtask subtask3 = new Subtask("Приготовить борщ",
-                "Достать ингридиенты для борща и приготовить его", 5);
-        subtask3 = taskManager.createSubtask(subtask3);
-
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
-
-        task1 = new Task(task1.getId(),"Помыть посуду",
-                "Помыть посуду на кухне до 6 вечера", Status.IN_PROGRESS);
-        task1 = taskManager.updateTask(task1);
-
-        task2 = new Task(task2.getId(),"Покормить кота","Взять корм и покормить кота",
-                Status.IN_PROGRESS);
-        task2 = taskManager.updateTask(task2);
-
-        subtask1 = new Subtask(subtask1.getId(),"Купить ингридиенты для плова",
-                "Заказать ингридиенты к плову", Status.IN_PROGRESS, 2);
-        subtask1 = taskManager.updateSubtask(subtask1);
-        subtask2 = new Subtask(subtask2.getId(),"Приготовить плов",
-                "Приготовить плов на ужин", Status.IN_PROGRESS, 2);
-        subtask2 = taskManager.updateSubtask(subtask2);
-
-        subtask3 = new Subtask(subtask3.getId(),"Приготовить борщ",
-                "Достать ингридиенты для борща и приготовить его", Status.IN_PROGRESS, 5);
-        subtask3 = taskManager.updateSubtask(subtask3);
-
-        System.out.println();
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
-
-        subtask1 = new Subtask(subtask1.getId(),"Купить ингридиенты для плова",
-                "Заказать ингридиенты к плову", Status.DONE, 2);
-        subtask1 = taskManager.updateSubtask(subtask1);
-
-        System.out.println();
-        System.out.println(taskManager.getAllEpic());
-
-        taskManager.deleteTaskById(1);
-        taskManager.deleteSubtaskById(4);
-        System.out.println();
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
 
         System.out.println(taskManager.getHistory());
         taskManager.getTaskById(0);
-        taskManager.getEpicById(2);
-        for (int i = 0; i < 8; i++) {
-            taskManager.getSubtaskById(3);
-        }
         System.out.println(taskManager.getHistory());
-        System.out.println(taskManager.getHistory().size());
+        taskManager.getEpicById(2);
+        System.out.println(taskManager.getHistory());
         taskManager.getSubtaskById(3);
         System.out.println(taskManager.getHistory());
-        System.out.println(taskManager.getHistory().size());
+        taskManager.getSubtaskById(3);
+        System.out.println(taskManager.getHistory());
+        taskManager.getEpicById(2);
+        System.out.println(taskManager.getHistory());
         taskManager.getTaskById(0);
         System.out.println(taskManager.getHistory());
-        System.out.println(taskManager.getHistory().size());
+        taskManager.deleteEpicById(2);
+        System.out.println(taskManager.getHistory());
 
         printAllTasks(taskManager);
     }
