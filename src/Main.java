@@ -40,6 +40,8 @@ public class Main {
         System.out.println(taskManager.getHistory());
         taskManager.getSubtaskById(3);
         System.out.println(taskManager.getHistory());
+        taskManager.getTaskById(1);
+        System.out.println(taskManager.getHistory());
         taskManager.getEpicById(2);
         System.out.println(taskManager.getHistory());
         taskManager.getTaskById(0);
