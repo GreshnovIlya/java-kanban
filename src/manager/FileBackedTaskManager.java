@@ -76,7 +76,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 if (Integer.parseInt(value[0]) > maxCount) {
                     maxCount = Integer.parseInt(value[0]);
                 }
-                switch(value[1]) {
+                switch (value[1]) {
                     case "TASK": {
                         Task task = new Task(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]));
                         fileBackedTaskManager.tasks.put(task.getId(),task);
