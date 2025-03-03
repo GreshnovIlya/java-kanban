@@ -45,7 +45,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 fw.write(subtaskAsString);
             }
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка при сохранении данных в файл " + file.getAbsoluteFile() +": "
+            throw new ManagerSaveException("Ошибка при сохранении данных в файл " + file.getAbsoluteFile() + ": "
                     + exception);
         }
     }
@@ -86,7 +86,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             }
             return fileBackedTaskManager;
         } catch (IOException exception) {
-            throw new ManagerLoadException("Ошибка при загрузки данных из файла " + file.getAbsoluteFile() +": "
+            throw new ManagerLoadException("Ошибка при загрузки данных из файла " + file.getAbsoluteFile() + ": "
                     + exception);
         }
     }
