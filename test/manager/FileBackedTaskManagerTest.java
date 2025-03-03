@@ -39,6 +39,7 @@ public class FileBackedTaskManagerTest {
         taskManager.save();
         taskManager = FileBackedTaskManager.loadFromFile(check);
         List<String> fileToStrings = Files.readAllLines(check.toPath());
+        fileToStrings.removeFirst();
 
         Assertions.assertNotNull(taskManager);
         Assertions.assertEquals(fileToStrings.size(), 0);
@@ -58,6 +59,7 @@ public class FileBackedTaskManagerTest {
         Subtask subtask1 = new Subtask(name3, description3, epic1.getId());
         subtask1 = taskManager.createSubtask(subtask1);
         List<String> fileToStrings = Files.readAllLines(check.toPath());
+        fileToStrings.removeFirst();
 
         Assertions.assertEquals(fileToStrings, checkString);
     }
