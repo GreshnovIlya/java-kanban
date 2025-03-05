@@ -1,14 +1,23 @@
-import manager.Managers;
+import manager.FileBackedTaskManager;
+import manager.InMemoryHistoryManager;
 import manager.TaskManager;
 import task.*;
+
+import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Поехали!");
+        //TaskManager taskManager = Managers.getDefault();
+        if (!(new File("file.csv").exists())) {
+            FileBackedTaskManager taskManagerNew = new FileBackedTaskManager(new File("file.csv"),
+                    new InMemoryHistoryManager());
+            taskManagerNew.save();
 
-        TaskManager taskManager = Managers.getDefault();
-
+        }
+        File backup = new File("file.csv");
+        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(backup);
+/*
         Task task1 = new Task("Помыть посуду","Помыть посуду на кухне до 6 вечера");
         task1 = taskManager.createTask(task1);
 
@@ -19,13 +28,13 @@ public class Main {
                 "Приготовить ужин к 6 часам, заказав для него продукты");
         epic1 = taskManager.createEpic(epic1);
         Subtask subtask1 = new Subtask("Купить ингридиенты для плова",
-                "Заказать ингридиенты к плову", 2);
+                "Заказать ингридиенты к плову", epic1.getId());
         subtask1 = taskManager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask("Помыть посуду",
-                "Помыть сковородку, тарелки и вилки", 2);
+                "Помыть сковородку, тарелки и вилки", epic1.getId());
         subtask2 = taskManager.createSubtask(subtask2);
         Subtask subtask3 = new Subtask("Приготовить плов",
-                "Приготовить плов на ужин", 2);
+                "Приготовить плов на ужин", epic1.getId());
         subtask3 = taskManager.createSubtask(subtask3);
 
         Epic epic2 = new Epic("Приготовить обед", "Приготовить обед к 13 часам");
@@ -48,7 +57,7 @@ public class Main {
         System.out.println(taskManager.getHistory());
         taskManager.deleteEpicById(2);
         System.out.println(taskManager.getHistory());
-
+*/
         printAllTasks(taskManager);
     }
 
