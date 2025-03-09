@@ -8,7 +8,6 @@ import task.Task;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> tasks = new HashMap<>();
@@ -288,8 +287,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Map<Integer, Subtask> getAllSubtaskInEpic(Integer id) {
         HashMap<Integer, Subtask> subtasksInEpic = new HashMap<>();
-        subtasks.keySet().stream().
-                filter(idSub -> subtasks.get(idSub).getEpicId().equals(id))
+        subtasks.keySet().stream()
+                .filter(idSub -> subtasks.get(idSub).getEpicId().equals(id))
                 .forEach(idSub -> subtasksInEpic.put(idSub, subtasks.get(idSub)));
         return subtasksInEpic;
     }
