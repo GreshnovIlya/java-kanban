@@ -119,7 +119,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     private static Task fromString(String stringTask) {
         String[] value = stringTask.split(";");
         if (Integer.parseInt(value[0]) > fileBackedTaskManager.count) {
-            fileBackedTaskManager.count = Integer.parseInt(value[0])+1;
+            fileBackedTaskManager.count = Integer.parseInt(value[0]) + 1;
         }
         switch (value[1]) {
             case "TASK": {
