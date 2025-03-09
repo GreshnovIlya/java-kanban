@@ -12,9 +12,9 @@ class TaskTest {
         String description = "Написать";
         String name = "Сделать";
         Status status = Status.NEW;
-        String rezult = "Task{id=0, name='Сделать', description='Написать', status='NEW'}";
+        String rezult = "Task{id=0, name='Сделать', description='Написать', status='NEW', duration='null', startTime='null'}";
 
-        Task task = new Task(id,name,description,status);
+        Task task = new Task(id,name,description,status, null, null);
 
         Assertions.assertEquals(task.toString(), rezult);
     }
@@ -26,7 +26,7 @@ class TaskTest {
         String name = "Сделать";
         Status status = Status.NEW;
 
-        Task task = new Task(id,name,description,status);
+        Task task = new Task(id,name,description,status, null, null);
         Task taskNew = task;
 
         Assertions.assertEquals(taskNew, task);
@@ -39,8 +39,8 @@ class TaskTest {
         String name = "Сделать";
         Status status = Status.NEW;
 
-        Task task = new Task(id,name,description,status);
-        Task taskNew = new Task(id+1,name,description,status);
+        Task task = new Task(id,name,description,status, null, null);
+        Task taskNew = new Task(id+1,name,description,status, null, null);
 
         Assertions.assertNotEquals(taskNew, task);
     }

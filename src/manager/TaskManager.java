@@ -6,8 +6,11 @@ import task.Task;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 public interface TaskManager {
+    TreeSet<Task> getPrioritizedTask();
+
     Task createTask(Task task);
 
     Epic createEpic(Epic epic);

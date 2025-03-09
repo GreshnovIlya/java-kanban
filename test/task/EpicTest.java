@@ -14,7 +14,8 @@ class EpicTest {
         String name = "Сделать";
         Status status = Status.NEW;
         List<Integer> subtasks = new ArrayList<>();
-        String rezult = "Epic{id=0, name='Сделать', description='Написать', status='NEW', subtask=[]'}";
+        String rezult = "Epic{id=0, name='Сделать', description='Написать', status='NEW', subtask=[], " +
+                "duration='null', startTime='null', endTime='null'}";
 
         Epic epic = new Epic(id,name,description,status,subtasks);
 
