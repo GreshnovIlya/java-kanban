@@ -17,10 +17,11 @@ class SubtaskTest {
         Status status = Status.NEW;
         List<Integer> subtasks = new ArrayList<>();
         Integer id = 1;
-        String rezult = "Subtask{id=1, name='Сделать', description='Написать', status='NEW', epicId='0'}";
+        String rezult = "Subtask{id=1, name='Сделать', description='Написать', status='NEW', epicId='0', " +
+                "duration='null', startTime='null'}";
 
         Epic epic = new Epic(idEpic,nameEpic,descriptionEpic,status, subtasks);
-        Subtask subtask = new Subtask(id,name,description,status,epic.getId());
+        Subtask subtask = new Subtask(id,name,description,status,epic.getId(), null, null);
 
         Assertions.assertEquals(subtask.toString(), rezult);
     }
@@ -37,7 +38,7 @@ class SubtaskTest {
         Integer id = 1;
 
         Epic epic = new Epic(idEpic,nameEpic,descriptionEpic,status, subtasks);
-        Subtask subtask = new Subtask(id,name,description,status,epic.getId());
+        Subtask subtask = new Subtask(id,name,description,status,epic.getId(), null, null);
         Subtask subtaskNew = subtask;
 
         Assertions.assertEquals(subtaskNew, subtask);
@@ -55,8 +56,8 @@ class SubtaskTest {
         Integer id = 1;
 
         Epic epic = new Epic(idEpic,nameEpic,descriptionEpic,status, subtasks);
-        Subtask subtask = new Subtask(id,name,description,status,epic.getId());
-        Subtask subtaskNew = new Subtask(id+1,name,description,status,epic.getId());
+        Subtask subtask = new Subtask(id,name,description,status,epic.getId(), null, null);
+        Subtask subtaskNew = new Subtask(id+1,name,description,status,epic.getId(), null, null);
 
         Assertions.assertNotEquals(subtaskNew, subtask);
     }

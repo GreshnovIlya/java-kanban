@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import exception.ManagerLoadException;
 import exception.ManagerSaveException;
@@ -51,16 +54,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     private String taskToString(Task task) {
-        return task.getId() + ";TASK;" + task.getName() + ";" + task.getStatus() + ";" + task.getDescription() + ";\n";
+        String str = task.getId() + ";TASK;" + task.getName() + ";" + task.getStatus() + ";" + task.getDescription() + ";";
+        if (task.getDuration() != null) {
+            return str + task.getDuration().toMinutes() + ";" + task.getStartTime() + ";\n";
+        } else {
+            return str + null + ";" + null + ";\n";
+        }
     }
 
     private String epicToString(Epic epic) {
-        return epic.getId() + ";EPIC;" + epic.getName() + ";" + epic.getStatus() + ";" + epic.getDescription() + ";\n";
+        String str = epic.getId() + ";EPIC;" + epic.getName() + ";" + epic.getStatus() + ";" + epic.getDescription()
+                + ";";
+        if (epic.getDuration() != null) {
+            return str + epic.getDuration().toMinutes() + ";" + epic.getStartTime() + ";" + epic.getEndTime() + ";\n";
+        } else {
+            return str + null + ";" + null + ";" + null + ";\n";
+        }
     }
 
     private String subtaskToString(Subtask subtask) {
-        return subtask.getId() + ";SUBTASK;" + subtask.getName() + ";" + subtask.getStatus() + ";"
-                + subtask.getDescription() + ";" + subtask.getEpicId() + "\n";
+        String str = subtask.getId() + ";SUBTASK;" + subtask.getName() + ";" + subtask.getStatus() + ";"
+                + subtask.getDescription() + ";" + subtask.getEpicId() + ";";
+        if (subtask.getDuration() != null) {
+            return str + subtask.getDuration().toMinutes() + ";" + subtask.getStartTime() + ";\n";
+        } else {
+            return str + null + ";" + null + ";\n";
+        }
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
@@ -72,12 +91,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 if (fromString(str).getClass() == Task.class) {
                     Task task = fromString(str);
                     fileBackedTaskManager.tasks.put(task.getId(),task);
+                    if (task.getStartTime() != null) {
+                        fileBackedTaskManager.prioritizedTask.add(task);
+                    }
                 } else if (fromString(str).getClass() == Epic.class) {
                     Epic epic = (Epic) fromString(str);
                     fileBackedTaskManager.epics.put(epic.getId(),epic);
                 } else if (fromString(str).getClass() == Subtask.class) {
                     Subtask subtask = (Subtask) fromString(str);
                     fileBackedTaskManager.subtasks.put(subtask.getId(),subtask);
+                    if (subtask.getStartTime() != null) {
+                        fileBackedTaskManager.prioritizedTask.add(subtask);
+                    }
                     Epic epic = fileBackedTaskManager.epics.get(subtask.getEpicId());
                     List<Integer> subtasksInEpic = epic.getSubtask();
                     subtasksInEpic.add(subtask.getId());
@@ -94,17 +119,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     private static Task fromString(String stringTask) {
         String[] value = stringTask.split(";");
         if (Integer.parseInt(value[0]) > fileBackedTaskManager.count) {
-            fileBackedTaskManager.count = Integer.parseInt(value[0]);
+            fileBackedTaskManager.count = Integer.parseInt(value[0])+1;
         }
         switch (value[1]) {
             case "TASK": {
-                return new Task(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]));
+                if (Objects.equals(value[5], "null")) {
+                    return new Task(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]),
+                            null, null);
+                }
+                return new Task(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]),
+                        Duration.ofMinutes(Long.parseLong(value[5])), Instant.parse(value[6]));
             } case "EPIC": {
-                return new Epic(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]),
+                Epic epic = new Epic(Integer.parseInt(value[0]), value[2], value[4], Status.valueOf(value[3]),
                         new ArrayList<>());
+                if (Objects.equals(value[5], "null")) {
+                    return epic;
+                }
+                epic.setStartTime(Instant.parse(value[6]));
+                epic.setDuration(Duration.ofMinutes(Long.parseLong(value[5])));
+                epic.setEndTime(Instant.parse(value[7]));
+                return epic;
             } case "SUBTASK": {
+                if (Objects.equals(value[6], "null")) {
+                    return new Subtask(Integer.parseInt(value[0]), value[2], value[4],
+                            Status.valueOf(value[3]), Integer.parseInt(value[5]), null, null);
+                }
                 return new Subtask(Integer.parseInt(value[0]), value[2], value[4],
-                        Status.valueOf(value[3]), Integer.parseInt(value[5]));
+                        Status.valueOf(value[3]), Integer.parseInt(value[5]), Duration.ofMinutes(Long.parseLong(value[6])),
+                        Instant.parse(value[7]));
             }
         }
         return null;
@@ -133,9 +175,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Task updateTask(Task task) {
-        Task createTask = super.updateTask(task);
+        Task updateTask = super.updateTask(task);
         save();
-        return createTask;
+        return updateTask;
+    }
+
+    @Override
+    public Epic updateEpic(Epic epic) {
+        Epic updateEpic = super.updateEpic(epic);
+        save();
+        return updateEpic;
     }
 
     @Override
