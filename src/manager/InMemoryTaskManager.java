@@ -25,8 +25,8 @@ public class InMemoryTaskManager implements TaskManager {
         return count++;
     }
 
-    public TreeSet<Task> getPrioritizedTask() {
-        return prioritizedTask;
+    public List<Task> getPrioritizedTask() {
+        return prioritizedTask.stream().toList();
     }
 
     private boolean checkEpicStatus(Epic epic, Status status) {
@@ -70,15 +70,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean hashIteractions(Task task) {
-        return prioritizedTask.stream().filter(taskStream -> (task.getEndTime().isBefore(taskStream.getStartTime())
-            && (task.getStartTime().isAfter(taskStream.getEndTime())))
-            || ((task.getEndTime().isAfter(taskStream.getStartTime())
-            && (task.getStartTime().isBefore(taskStream.getEndTime()))))).findAny().isPresent();
+        if (prioritizedTask.size() == 0) {
+            return true;
+        }
+        return prioritizedTask.stream().filter(taskStream -> ((task.getEndTime().isBefore(taskStream.getStartTime())
+                    || task.getEndTime().equals(taskStream.getStartTime()))
+                    && (task.getStartTime().isBefore(taskStream.getStartTime())))
+                    || ((task.getEndTime().isAfter(taskStream.getEndTime())
+                    && (task.getStartTime().isAfter(taskStream.getEndTime())
+                    || task.getStartTime().equals(taskStream.getEndTime())))))
+                .toList().size() == prioritizedTask.size();
     }
 
     @Override
     public Task createTask(Task task) {
-        if (task.getStartTime() == null || !hashIteractions(task)) {
+        if (task.getStartTime() == null || hashIteractions(task)) {
             int newId = nextId();
             task.setId(newId);
             task.setStatus(Status.NEW);
@@ -105,7 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask createSubtask(Subtask subtask) {
-        if (subtask.getStartTime() == null || !hashIteractions(subtask)) {
+        if (subtask.getStartTime() == null || hashIteractions(subtask)) {
             int newId = nextId();
             subtask.setId(newId);
             subtask.setStatus(Status.NEW);
@@ -128,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStartTime() != null) {
             prioritizedTask.remove(task);
         }
-        if (tasks.containsKey(task.getId()) && (task.getStartTime() == null || !hashIteractions(task))) {
+        if (tasks.containsKey(task.getId()) && (task.getStartTime() == null || hashIteractions(task))) {
             Task existingTask = tasks.get(task.getId());
             existingTask.setName(task.getName());
             existingTask.setDescription(task.getDescription());
@@ -162,7 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask.getStartTime() != null) {
             prioritizedTask.remove(subtask);
         }
-        if ((subtasks.containsKey(subtask.getId())) && (subtask.getStartTime() == null || !hashIteractions(subtask))) {
+        if ((subtasks.containsKey(subtask.getId())) && (subtask.getStartTime() == null || hashIteractions(subtask))) {
             Subtask existingSubtask = subtasks.get(subtask.getId());
             existingSubtask.setName(subtask.getName());
             existingSubtask.setDescription(subtask.getDescription());

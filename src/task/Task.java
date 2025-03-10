@@ -28,6 +28,9 @@ public class Task {
     }
 
     public Instant getEndTime() {
+        if (duration == null) {
+            throw new NullPointerException();
+        }
         return startTime.plus(duration);
     }
 

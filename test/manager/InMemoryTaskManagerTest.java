@@ -202,5 +202,7 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest {
         taskManager.createSubtask(subtask3);
 
         Assertions.assertEquals(taskManager.getPrioritizedTask().toString(), str);
+
+        System.out.println(Instant.parse("2025-03-08T12:10:00Z").isAfter(Instant.parse("2025-03-08T12:10:00Z")));
     }
 }

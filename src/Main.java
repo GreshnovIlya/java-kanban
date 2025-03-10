@@ -21,11 +21,11 @@ public class Main {
         FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(backup);
 
         Task task1 = new Task("Помыть посуду","Помыть посуду на кухне до 6 вечера",
-                Duration.ofMinutes(10), Instant.parse("2025-03-08T12:00:00.000000Z"));
+                Duration.ofMinutes(10), Instant.parse("2025-03-08T12:00:00Z"));
         task1 = taskManager.createTask(task1);
 
         Task task2 = new Task("Покормить кота","Взять корм и покормить кота",Duration.ofMinutes(30),
-                Instant.parse("2025-03-08T12:10:00.000000Z"));
+                Instant.parse("2025-03-08T12:10:00Z"));
         task2 = taskManager.createTask(task2);
 
         Epic epic1 = new Epic("Приготовить ужин",

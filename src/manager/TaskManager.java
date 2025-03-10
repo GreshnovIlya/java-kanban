@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 public interface TaskManager {
-    TreeSet<Task> getPrioritizedTask();
+    List<Task> getPrioritizedTask();
 
     Task createTask(Task task);
 
