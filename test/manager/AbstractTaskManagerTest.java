@@ -9,9 +9,7 @@ import task.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 abstract class AbstractTaskManagerTest<M extends TaskManager> {
     protected M taskManager;
@@ -27,11 +25,6 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
     String descriptionSubtask3 = "222";
 
     abstract TaskManager getTaskManager() throws IOException;
-
-//    @BeforeEach
-//    public void init() {
-//        taskManager = Managers.getDefault();
-//    }
 
     @Test
     void createTask() {
@@ -157,17 +150,17 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
     }
 
     @Test
-    void deleteTaskById() {
+    void deleteTasksById() {
         Task task = new Task(name, description, null, null);
 
         taskManager.createTask(task);
         taskManager.deleteTaskById(task.getId());
 
-        Assertions.assertEquals(taskManager.getAllTask(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllTasks(), new ArrayList<>());
     }
 
     @Test
-    void deleteEpicById() {
+    void deleteEpicsById() {
         Epic epic = new Epic(name, description);
         taskManager.createEpic(epic);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic.getId(), null, null);
@@ -177,13 +170,13 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
 
         taskManager.deleteEpicById(epic.getId());
 
-        Assertions.assertEquals(taskManager.getAllEpic(), new HashMap<>());
-        Assertions.assertEquals(taskManager.getAllSubtask(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllEpics(), new ArrayList<>());
+        Assertions.assertEquals(taskManager.getAllSubtasks(), new ArrayList<>());
     }
 
     @Test
-    void deleteSubtaskById() {
-        Map<Integer, Subtask> checkSubtask = new HashMap<>();
+    void deleteSubtasksById() {
+        List<Subtask> checkSubtask = new ArrayList<>();
         List checkSub = new ArrayList<>();
         checkSub.add(1);
         checkSub.add(3);
@@ -192,18 +185,16 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
         taskManager.createEpic(epic);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic.getId(), null, null);
         taskManager.createSubtask(subtask1);
-        checkSubtask.put(subtask1.getId(),subtask1);
+        checkSubtask.add(subtask1);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        checkSubtask.put(subtask2.getId(),subtask2);
         Subtask subtask3 = new Subtask(nameSubtask3, descriptionSubtask3, epic.getId(), null, null);
         taskManager.createSubtask(subtask3);
-        checkSubtask.put(subtask3.getId(),subtask3);
+        checkSubtask.add(subtask3);
 
         taskManager.deleteSubtaskById(subtask2.getId());
-        checkSubtask.remove(subtask2.getId());
 
-        Assertions.assertEquals(taskManager.getAllSubtask(), checkSubtask);
+        Assertions.assertEquals(taskManager.getAllSubtasks(), checkSubtask);
         Assertions.assertEquals(taskManager.getEpicById(0).getSubtask(), checkSub);
     }
 
@@ -257,19 +248,19 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
     }
 
     @Test
-    void deleteTask() {
+    void deleteTasks() {
         Task task1 = new Task(name, description, null, null);
         Task task2 = new Task(nameUpdate, descriptionUpdate, null, null);
 
         taskManager.createTask(task1);
         taskManager.createTask(task2);
-        taskManager.deleteTask();
+        taskManager.deleteTasks();
 
-        Assertions.assertEquals(taskManager.getAllTask(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllTasks(), new ArrayList<>());
     }
 
     @Test
-    void deleteEpic() {
+    void deleteEpics() {
         Epic epic1 = new Epic(name, description);
         taskManager.createEpic(epic1);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic1.getId(), null, null);
@@ -278,80 +269,80 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
         taskManager.createEpic(epic2);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic2.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        taskManager.deleteEpic();
+        taskManager.deleteEpics();
 
-        Assertions.assertEquals(taskManager.getAllEpic(), new HashMap<>());
-        Assertions.assertEquals(taskManager.getAllSubtask(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllEpics(), new ArrayList<>());
+        Assertions.assertEquals(taskManager.getAllSubtasks(), new ArrayList<>());
     }
 
     @Test
-    void deleteSubtask() {
+    void deleteSubtasks() {
         Epic epic = new Epic(name, description);
         taskManager.createEpic(epic);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic.getId(), null, null);
         taskManager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        taskManager.deleteSubtask();
+        taskManager.deleteSubtasks();
 
-        Assertions.assertEquals(taskManager.getAllSubtask(), new HashMap<>());
+        Assertions.assertEquals(taskManager.getAllSubtasks(), new ArrayList<>());
     }
 
     @Test
-    void getAllTask() {
-        Map<Integer, Task> checkTask = new HashMap<>();
+    void getAllTasks() {
+        List<Task> checkTask = new ArrayList<>();
 
         Task task1 = new Task(name, description, null, null);
         Task task2 = new Task(nameUpdate, descriptionUpdate, null, null);
         taskManager.createTask(task1);
-        checkTask.put(task1.getId(), task1);
+        checkTask.add(task1);
         taskManager.createTask(task2);
-        checkTask.put(task2.getId(), task2);
+        checkTask.add(task2);
 
-        Assertions.assertEquals(taskManager.getAllTask(), checkTask);
+        Assertions.assertEquals(taskManager.getAllTasks(), checkTask);
     }
 
     @Test
-    void getAllEpic() {
-        Map<Integer, Epic> checkEpic = new HashMap<>();
-        Map<Integer, Subtask> checkSubtask = new HashMap<>();
+    void getAllEpics() {
+        List<Epic> checkEpic = new ArrayList<>();
+        List<Subtask> checkSubtask = new ArrayList<>();
 
         Epic epic1 = new Epic(name, description);
         taskManager.createEpic(epic1);
-        checkEpic.put(epic1.getId(), epic1);
+        checkEpic.add(epic1);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic1.getId(), null, null);
         taskManager.createSubtask(subtask1);
-        checkSubtask.put(subtask1.getId(), subtask1);
+        checkSubtask.add(subtask1);
         Epic epic2 = new Epic(nameUpdate, descriptionUpdate);
         taskManager.createEpic(epic2);
-        checkEpic.put(epic2.getId(), epic2);
+        checkEpic.add(epic2);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic2.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        checkSubtask.put(subtask2.getId(), subtask2);
+        checkSubtask.add(subtask2);
 
-        Assertions.assertEquals(taskManager.getAllEpic(), checkEpic);
-        Assertions.assertEquals(taskManager.getAllSubtask(), checkSubtask);
+        Assertions.assertEquals(taskManager.getAllEpics(), checkEpic);
+        Assertions.assertEquals(taskManager.getAllSubtasks(), checkSubtask);
     }
 
     @Test
-    void getAllSubtask() {
-        Map<Integer, Subtask> checkSubtask = new HashMap<>();
+    void getAllSubtasks() {
+        List<Subtask> checkSubtask = new ArrayList<>();
 
         Epic epic = new Epic(name, description);
         taskManager.createEpic(epic);
         Subtask subtask1 = new Subtask(nameSubtask1, descriptionSubtask1, epic.getId(), null, null);
         taskManager.createSubtask(subtask1);
-        checkSubtask.put(subtask1.getId(), subtask1);
+        checkSubtask.add(subtask1);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        checkSubtask.put(subtask2.getId(), subtask2);
+        checkSubtask.add(subtask2);
 
-        Assertions.assertEquals(taskManager.getAllSubtask(), checkSubtask);
+        Assertions.assertEquals(taskManager.getAllSubtasks(), checkSubtask);
     }
 
     @Test
-    void getAllSubtaskInEpic() {
-        Map<Integer, Subtask> checkSubtask = new HashMap<>();
+    void getAllSubtasksInEpic() {
+        List<Subtask> checkSubtask = new ArrayList<>();
 
         Epic epic1 = new Epic(name, description);
         taskManager.createEpic(epic1);
@@ -361,10 +352,10 @@ abstract class AbstractTaskManagerTest<M extends TaskManager> {
         taskManager.createEpic(epic2);
         Subtask subtask2 = new Subtask(nameSubtask2, descriptionSubtask2, epic2.getId(), null, null);
         taskManager.createSubtask(subtask2);
-        checkSubtask.put(subtask2.getId(), subtask2);
+        checkSubtask.add(subtask2);
         Subtask subtask3 = new Subtask(nameSubtask3, descriptionSubtask3, epic2.getId(), null, null);
         taskManager.createSubtask(subtask3);
-        checkSubtask.put(subtask3.getId(), subtask3);
+        checkSubtask.add(subtask3);
 
         Assertions.assertEquals(taskManager.getAllSubtaskInEpic(epic2.getId()), checkSubtask);
     }

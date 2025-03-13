@@ -29,9 +29,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public void save() {
-        Collection<Task> allTask = getAllTask().values();
-        Collection<Epic> allEpic = getAllEpic().values();
-        Collection<Subtask> allSubtask = getAllSubtask().values();
+        Collection<Task> allTask = getAllTasks();
+        Collection<Epic> allEpic = getAllEpics();
+        Collection<Subtask> allSubtask = getAllSubtasks();
 
         try (FileWriter fw = new FileWriter(file)) {
             fw.write("id,type,name,status,description,epic\n");

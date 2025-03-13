@@ -1,5 +1,7 @@
 package manager;
 
+import exception.TaskHasInteractions;
+import exception.TaskNotFoundException;
 import task.Epic;
 import task.Status;
 import task.Subtask;
@@ -95,7 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             return task;
         }
-        throw new RuntimeException("Время пересекается");
+        throw new TaskHasInteractions("Время пересекается");
     }
 
     @Override
@@ -126,13 +128,13 @@ public class InMemoryTaskManager implements TaskManager {
             }
             return subtask;
         }
-        throw new RuntimeException("Время пересекается");
+        throw new TaskHasInteractions("Время пересекается");
     }
 
     @Override
     public Task updateTask(Task task) {
         if (task.getStartTime() != null) {
-            prioritizedTask.remove(task);
+            prioritizedTask.remove(getTaskById(task.getId()));
         }
         if (tasks.containsKey(task.getId()) && (task.getStartTime() == null || hashIteractions(task))) {
             Task existingTask = tasks.get(task.getId());
@@ -149,7 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStartTime() != null) {
             prioritizedTask.add(task);
         }
-        throw new RuntimeException("Время пересекается");
+        throw new TaskHasInteractions("Время пересекается");
     }
 
     @Override
@@ -166,7 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask updateSubtask(Subtask subtask) {
         if (subtask.getStartTime() != null) {
-            prioritizedTask.remove(subtask);
+            prioritizedTask.remove(getSubtaskById(subtask.getId()));
         }
         if ((subtasks.containsKey(subtask.getId())) && (subtask.getStartTime() == null || hashIteractions(subtask))) {
             Subtask existingSubtask = subtasks.get(subtask.getId());
@@ -194,7 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask.getStartTime() != null) {
             prioritizedTask.add(subtask);
         }
-        throw new RuntimeException("Время пересекается");
+        throw new TaskHasInteractions("Время пересекается");
     }
 
     @Override
@@ -232,23 +234,26 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTask() {
+    public void deleteTasks() {
        new ArrayList<>(tasks.values()).stream().forEach(task -> deleteTaskById(task.getId()));
     }
 
     @Override
-    public void deleteEpic() {
+    public void deleteEpics() {
         new ArrayList<>(subtasks.values()).stream().forEach(subtask -> deleteSubtaskById(subtask.getId()));
         new ArrayList<>(epics.values()).stream().forEach(epic -> deleteEpicById(epic.getId()));
     }
 
     @Override
-    public void deleteSubtask() {
+    public void deleteSubtasks() {
         new ArrayList<>(subtasks.values()).stream().forEach(subtask -> deleteSubtaskById(subtask.getId()));
     }
 
     @Override
     public Task getTaskById(int id) {
+        if (tasks.get(id) == null) {
+            throw new TaskNotFoundException("Task с id " + id + " не найдена");
+        }
         Task task = new Task(id,tasks.get(id).getName(),tasks.get(id).getDescription(), tasks.get(id).getStatus(),
                 tasks.get(id).getDuration(), tasks.get(id).getStartTime());
         historyManager.addToHistory(task);
@@ -258,6 +263,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
+        if (epics.get(id) == null) {
+            throw new TaskNotFoundException("Epic с id " + id + " не найдена");
+        }
         Epic epic = new Epic(id,epics.get(id).getName(),epics.get(id).getDescription(), epics.get(id).getStatus(),
                 epics.get(id).getSubtask());
         historyManager.addToHistory(epic);
@@ -267,6 +275,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
+        if (subtasks.get(id) == null) {
+            throw new TaskNotFoundException("Subtask с id " + id + " не найдена");
+        }
         Subtask subtask = new Subtask(id,subtasks.get(id).getName(),subtasks.get(id).getDescription(),
                 subtasks.get(id).getStatus(), subtasks.get(id).getEpicId(), subtasks.get(id).getDuration(),
                 subtasks.get(id).getStartTime());
@@ -276,26 +287,26 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, Task> getAllTask() {
-        return tasks;
+    public List<Task> getAllTasks() {
+        return tasks.values().stream().toList();
     }
 
     @Override
-    public Map<Integer, Epic> getAllEpic() {
-        return epics;
+    public List<Epic> getAllEpics() {
+        return epics.values().stream().toList();
     }
 
     @Override
-    public Map<Integer, Subtask> getAllSubtask() {
-        return subtasks;
+    public List<Subtask> getAllSubtasks() {
+        return subtasks.values().stream().toList();
     }
 
     @Override
-    public Map<Integer, Subtask> getAllSubtaskInEpic(Integer id) {
-        HashMap<Integer, Subtask> subtasksInEpic = new HashMap<>();
+    public List<Subtask> getAllSubtaskInEpic(Integer id) {
+        List<Subtask> subtasksInEpic = new ArrayList<>();
         subtasks.keySet().stream()
                 .filter(idSub -> subtasks.get(idSub).getEpicId().equals(id))
-                .forEach(idSub -> subtasksInEpic.put(idSub, subtasks.get(idSub)));
+                .forEach(idSub -> subtasksInEpic.add(subtasks.get(idSub)));
         return subtasksInEpic;
     }
 
