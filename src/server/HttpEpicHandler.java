@@ -10,7 +10,6 @@ import task.Epic;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class HttpEpicHandler extends BaseHttpHandler {
     private TaskManager taskManager;
@@ -124,8 +123,8 @@ public class HttpEpicHandler extends BaseHttpHandler {
         bodyString = bodyString.replaceAll("\"endTime\":\"null\",", "");
         bodyString = bodyString.replaceAll("\"duration\":\"null\",", "");
         bodyString = bodyString.replaceAll("\"startTime\":\"null\"", "");
-        if (bodyString.substring(bodyString.length()-2,bodyString.length()).equals(",}")) {
-            bodyString = bodyString.substring(0,bodyString.length()-2) + "}";
+        if (bodyString.substring(bodyString.length() - 2,bodyString.length()).equals(",}")) {
+            bodyString = bodyString.substring(0, bodyString.length() - 2) + "}";
         }
         return bodyString;
     }
