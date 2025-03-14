@@ -5,7 +5,6 @@ import task.Subtask;
 import task.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TaskManager {
     List<Task> getPrioritizedTask();
@@ -28,11 +27,11 @@ public interface TaskManager {
 
     Subtask deleteSubtaskById(Integer id);
 
-    void deleteTask();
+    void deleteTasks();
 
-    void deleteEpic();
+    void deleteEpics();
 
-    void deleteSubtask();
+    void deleteSubtasks();
 
     Task getTaskById(int id);
 
@@ -40,13 +39,13 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    Map<Integer, Task> getAllTask();
+    List<Task> getAllTasks();
 
-    Map<Integer, Epic> getAllEpic();
+    List<Epic> getAllEpics();
 
-    Map<Integer, Subtask> getAllSubtask();
+    List<Subtask> getAllSubtasks();
 
-    Map<Integer, Subtask> getAllSubtaskInEpic(Integer id);
+    List<Subtask> getAllSubtaskInEpic(Integer id);
 
     List<Task> getHistory();
 }

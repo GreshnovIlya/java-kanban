@@ -1,7 +1,6 @@
 package manager;
 
 import exception.ManagerLoadException;
-import exception.ManagerSaveException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +10,9 @@ import task.Subtask;
 import task.Task;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,14 +92,14 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
         checkSubtask.put(subtask1.getId(),subtask1);
         taskManager = FileBackedTaskManager.loadFromFile(check);
 
-        Assertions.assertEquals(taskManager.getAllTask().values().toString(), checkTask.values().toString());
-        Assertions.assertEquals(taskManager.getAllEpic().values().toString(), checkEpic.values().toString());
-        Assertions.assertEquals(taskManager.getAllSubtask().values().toString(), checkSubtask.values().toString());
+        Assertions.assertEquals(taskManager.getAllTasks().toString(), checkTask.values().toString());
+        Assertions.assertEquals(taskManager.getAllEpics().toString(), checkEpic.values().toString());
+        Assertions.assertEquals(taskManager.getAllSubtasks().toString(), checkSubtask.values().toString());
     }
 
     @Test
     void saveToFileAndLoadingIfDeleteAndUpdateTask() {
-        Map<Integer, Task> checkTask = new HashMap<>();
+        List<Task> checkTask = new ArrayList<>();
 
         Task task1 = new Task(name1, description1, null, null);
         task1 = taskManager.createTask(task1);
@@ -115,15 +109,15 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
         taskManager.deleteTaskById(task1.getId());
         task2 = new Task(task2.getId(), name1, description1, Status.IN_PROGRESS, null, null);
         task2 = taskManager.updateTask(task2);
-        checkTask.put(task2.getId(),task2);
+        checkTask.add(task2);
 
-        Assertions.assertEquals(taskManager.getAllTask().values().toString(), checkTask.values().toString());
+        Assertions.assertEquals(taskManager.getAllTasks().toString(), checkTask.toString());
     }
 
     @Test
     void saveToFileAndLoadingIfDeleteAndUpdateSubtask() {
-        Map<Integer, Task> checkEpic = new HashMap<>();
-        Map<Integer, Task> checkSubtask = new HashMap<>();
+        List<Task> checkEpic = new ArrayList<>();
+        List<Task> checkSubtask = new ArrayList<>();
 
         Epic epic1 = new Epic(name1, description1);
         epic1 = taskManager.createEpic(epic1);
@@ -131,27 +125,27 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
         subtask1 = taskManager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask(name3, description3, epic1.getId(), null, null);
         subtask2 = taskManager.createSubtask(subtask2);
-        checkSubtask.put(subtask2.getId(),subtask2);
+        checkSubtask.add(subtask2);
         Epic epic2 = new Epic(name4, description4);
         epic2 = taskManager.createEpic(epic2);
         Subtask subtask3 = new Subtask(name4, description4, epic2.getId(), null, null);
         subtask3 = taskManager.createSubtask(subtask3);
         taskManager = FileBackedTaskManager.loadFromFile(check);
         taskManager.deleteSubtaskById(subtask1.getId());
-        epic1 = taskManager.getAllEpic().get(epic1.getId());
+        epic1 = taskManager.getEpicById(epic1.getId());
         subtask3 = new Subtask(subtask3.getId(), name4, description4, Status.IN_PROGRESS, epic2.getId(), null, null);
         subtask3 = taskManager.updateSubtask(subtask3);
-        epic2 = taskManager.getAllEpic().get(epic2.getId());
-        checkSubtask.put(subtask3.getId(),subtask3);
-        checkEpic.put(epic1.getId(),epic1);
-        checkEpic.put(epic2.getId(),epic2);
+        epic2 = taskManager.getEpicById(epic2.getId());
+        checkSubtask.add(subtask3);
+        checkEpic.add(epic1);
+        checkEpic.add(epic2);
 
-        Assertions.assertEquals(taskManager.getAllSubtask().values().toString(), checkSubtask.values().toString());
-        Assertions.assertEquals(taskManager.getAllEpic().values().toString(), checkEpic.values().toString());
+        Assertions.assertEquals(taskManager.getAllSubtasks().toString(), checkSubtask.toString());
+        Assertions.assertEquals(taskManager.getAllEpics().toString(), checkEpic.toString());
     }
 
     @Test
-    void saveToFileAndLoadingIfDeleteEpic() {
+    void saveToFileAndLoadingIfDeleteEpics() {
         Epic epic1 = new Epic(name1, description1);
         epic1 = taskManager.createEpic(epic1);
         Subtask subtask1 = new Subtask(name2, description2, epic1.getId(), null, null);
@@ -159,8 +153,8 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
         taskManager = FileBackedTaskManager.loadFromFile(check);
         taskManager.deleteEpicById(epic1.getId());
 
-        Assertions.assertEquals(taskManager.getAllEpic().values().toString(), new HashMap<>().values().toString());
-        Assertions.assertEquals(taskManager.getAllSubtask().values().toString(), new HashMap<>().values().toString());
+        Assertions.assertEquals(taskManager.getAllEpics().toString(), new ArrayList<>().toString());
+        Assertions.assertEquals(taskManager.getAllSubtasks().toString(), new ArrayList<>().toString());
     }
 
     @Test
