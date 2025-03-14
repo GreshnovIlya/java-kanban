@@ -121,7 +121,7 @@ public class HttpSubtaskTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(check, response.body());
     }
 
@@ -152,7 +152,7 @@ public class HttpSubtaskTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(check, response.body());
     }
 

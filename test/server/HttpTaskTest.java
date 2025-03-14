@@ -103,7 +103,7 @@ public class HttpTaskTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         List<Task> tasksFromManager = taskManager.getAllTasks();
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertNotNull(tasksFromManager, "Задачи не возвращаются");
         Assertions.assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
         Assertions.assertEquals("Task", tasksFromManager.getFirst().getName(), "Некорректное имя задачи");
@@ -131,7 +131,7 @@ public class HttpTaskTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(check, response.body());
     }
 

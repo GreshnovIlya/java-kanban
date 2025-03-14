@@ -124,7 +124,7 @@ public class HttpEpicTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(check, response.body());
     }
 
@@ -156,7 +156,7 @@ public class HttpEpicTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Assertions.assertEquals(201, response.statusCode());
+        Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(check, response.body());
     }
 
@@ -192,5 +192,32 @@ public class HttpEpicTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(404, response.statusCode());
+    }
+
+    @Test
+    public void getEpicSubtask() throws IOException, InterruptedException {
+        URI url = URI.create("http://localhost:8080/epics/0/subtasks");
+        String check = "[\n" +
+                "  {\n" +
+                "    \"epicId\": 0,\n" +
+                "    \"id\": 1,\n" +
+                "    \"name\": \"Subtask1\",\n" +
+                "    \"description\": \"Testing subtask1\",\n" +
+                "    \"status\": \"NEW\",\n" +
+                "    \"duration\": \"1\",\n" +
+                "    \"startTime\": \"2025-03-08T12:00:00Z\"\n" +
+                "  }\n" +
+                "]";
+        Epic epic = new Epic("Epic1", "Testing epic1");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("Subtask1", "Testing subtask1", 0, Duration.ofMinutes(1),
+                Instant.ofEpochMilli(Instant.parse("2025-03-08T12:00:00Z").toEpochMilli()));
+        taskManager.createSubtask(subtask);
+
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(check, response.body());
     }
 }

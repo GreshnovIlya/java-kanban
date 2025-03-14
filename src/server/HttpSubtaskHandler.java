@@ -2,9 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import exception.ErrorResponse;
-import exception.TaskHasInteractions;
-import exception.TaskNotFoundException;
+import exception.*;
 import manager.TaskManager;
 import task.Subtask;
 
@@ -59,6 +57,9 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         } catch (TaskHasInteractions e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 406, exchange.getRequestURI());
             sendText(exchange, jsonMapper.toJson(errorResponse), 406);
+        } catch (ManagerLoadException | ManagerSaveException e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI());
+            sendText(exchange, jsonMapper.toJson(errorResponse), 500);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI());
             sendText(exchange, jsonMapper.toJson(errorResponse), 500);
@@ -83,8 +84,8 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
     public void handleCreate(HttpExchange exchange) throws IOException {
         String bodyString = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Subtask taskNew = jsonMapper.fromJson(bodyString, Subtask.class);
-        taskManager.createSubtask(taskNew);
-        sendText(exchange, jsonMapper.toJson(taskNew), 201);
+        taskNew = taskManager.createSubtask(taskNew);
+        sendText(exchange, jsonMapper.toJson(taskNew), 200);
     }
 
     public void handleUpdate(HttpExchange exchange, String path) throws IOException {
@@ -94,8 +95,8 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
             int id = Integer.parseInt(path);
             taskNew.setId(id);
             taskNew.setEpicId(taskManager.getSubtaskById(id).getEpicId());
-            taskManager.updateSubtask(taskNew);
-            sendText(exchange, jsonMapper.toJson(taskNew), 201);
+            taskNew = taskManager.updateSubtask(taskNew);
+            sendText(exchange, jsonMapper.toJson(taskNew), 200);
         } else {
             throw new TaskNotFoundException("У Subtask неверно задан id: " + path);
         }

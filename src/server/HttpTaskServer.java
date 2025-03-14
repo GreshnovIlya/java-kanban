@@ -25,9 +25,9 @@ public class HttpTaskServer {
                 .registerTypeAdapter(Instant.class, new InstantAdapter())
                 .create();
 
-        httpServer.createContext("/task", new HttpTaskHandler(taskManager, jsonMapper));
-        httpServer.createContext("/epic", new HttpEpicHandler(taskManager, jsonMapper));
-        httpServer.createContext("/subtask", new HttpSubtaskHandler(taskManager, jsonMapper));
+        httpServer.createContext("/tasks", new HttpTaskHandler(taskManager, jsonMapper));
+        httpServer.createContext("/epics", new HttpEpicHandler(taskManager, jsonMapper));
+        httpServer.createContext("/subtasks", new HttpSubtaskHandler(taskManager, jsonMapper));
         httpServer.createContext("/history", new HttpHistoryHandler(taskManager, jsonMapper));
         httpServer.createContext("/prioritized", new HttpPrioritizedHandler(taskManager, jsonMapper));
     }

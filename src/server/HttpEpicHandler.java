@@ -2,9 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import exception.ErrorResponse;
-import exception.TaskHasInteractions;
-import exception.TaskNotFoundException;
+import exception.*;
 import manager.TaskManager;
 import task.Epic;
 
@@ -33,6 +31,9 @@ public class HttpEpicHandler extends BaseHttpHandler {
                     } else if (path.length == 3) {
                         handleGetAllById(exchange, path[2]);
                         break;
+                    } else if (path.length == 4  && path[3].equals("subtasks")) {
+                        handleGetSubtasks(exchange, path);
+                        break;
                     }
                 case "POST":
                     if (path.length == 2) {
@@ -58,6 +59,9 @@ public class HttpEpicHandler extends BaseHttpHandler {
         } catch (TaskHasInteractions e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 406, exchange.getRequestURI());
             sendText(exchange, jsonMapper.toJson(errorResponse), 406);
+        } catch (ManagerLoadException | ManagerSaveException e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI());
+            sendText(exchange, jsonMapper.toJson(errorResponse), 500);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI());
             sendText(exchange, jsonMapper.toJson(errorResponse), 500);
@@ -86,8 +90,8 @@ public class HttpEpicHandler extends BaseHttpHandler {
         taskNew.setDuration(null);
         taskNew.setStartTime(null);
         taskNew.setEndTime(null);
-        taskManager.createEpic(taskNew);
-        sendText(exchange, jsonMapper.toJson(taskNew), 201);
+        taskNew = taskManager.createEpic(taskNew);
+        sendText(exchange, jsonMapper.toJson(taskNew), 200);
     }
 
     public void handleUpdate(HttpExchange exchange, String path) throws IOException {
@@ -97,13 +101,13 @@ public class HttpEpicHandler extends BaseHttpHandler {
             Epic taskNew = jsonMapper.fromJson(bodyString, Epic.class);
             int id = Integer.parseInt(path);
             taskNew.setId(id);
-            taskManager.updateEpic(taskNew);
+            taskNew = taskManager.updateEpic(taskNew);
             taskNew.setStatus(taskManager.getEpicById(id).getStatus());
             taskNew.setSubtask(taskManager.getEpicById(id).getSubtask());
             taskNew.setDuration(taskManager.getEpicById(id).getDuration());
             taskNew.setStartTime(taskManager.getEpicById(id).getStartTime());
             taskNew.setEndTime(taskManager.getEpicById(id).getEndTime());
-            sendText(exchange, jsonMapper.toJson(taskNew), 201);
+            sendText(exchange, jsonMapper.toJson(taskNew), 200);
         } else {
             throw new TaskNotFoundException("У Epic неверно задан id: " + path);
         }
@@ -127,5 +131,14 @@ public class HttpEpicHandler extends BaseHttpHandler {
             bodyString = bodyString.substring(0, bodyString.length() - 2) + "}";
         }
         return bodyString;
+    }
+
+    public void handleGetSubtasks(HttpExchange exchange, String[] path) throws IOException {
+        if (isInt(path[2])) {
+            int id = Integer.parseInt(path[2]);
+            sendText(exchange, jsonMapper.toJson(taskManager.getAllSubtaskInEpic(id)), 200);
+        } else {
+            throw new TaskNotFoundException("У Epic неверно задан id: " + path[2]);
+        }
     }
 }
